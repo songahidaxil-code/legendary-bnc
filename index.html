@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>BNC — Balay ni Chad</title>
+<style>
+:root{--bg:#0b0a12;--panel:#14121b;--line:#302d3b;--purple:#9255f5;--purple2:#6030a8;--muted:#918b9e;--white:#f7f4ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+header{padding:28px 18px 8px;max-width:1100px;margin:auto;position:relative}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:clamp(34px,7vw,58px);letter-spacing:-2px;line-height:1;margin:8px 0 24px;font-weight:800}
+.brand{width:62px;height:62px;border-radius:50%;background:linear-gradient(145deg,#9b5cff,#432078);display:grid;place-items:center;font-weight:900;font-size:17px;box-shadow:0 0 0 4px #21172f}
+.brand small{font-size:8px;display:block;letter-spacing:1px}
+main{width:min(1100px,92%);margin:0 auto 65px}
+.search-wrap{margin:0 0 28px}
+.search{width:100%;height:62px;border-radius:40px;border:2px solid #302d39;background:#17151e;color:#fff;padding:0 28px;font-size:17px;outline:none}
+.search:focus{border-color:var(--purple)}
+.filters{display:flex;gap:12px;overflow-x:auto;padding:8px 0 18px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{white-space:nowrap;border:2px solid #292633;background:transparent;color:#b9b2c5;border-radius:30px;padding:14px 26px;font-size:16px;cursor:pointer}
+.filter.active{background:linear-gradient(110deg,#a05cff,#8146e8);border-color:transparent;color:#fff}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:24px 0 16px}
+.section-head h2{font-size:18px;margin:0;letter-spacing:.2px}
+.section-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.count{font-size:12px;color:#d8c7ff;border:1px solid #43345c;padding:8px 12px;border-radius:20px;white-space:nowrap}
+.members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.member{min-height:210px;border:2px solid #292631;border-radius:32px;background:#14121a;padding:27px;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .18s,transform .18s}
+.member:hover{border-color:#7650aa;transform:translateY(-2px)}
+.member-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.initials{width:66px;height:66px;border-radius:23px;background:linear-gradient(145deg,#a66aff,#49247e);display:grid;place-items:center;font-size:21px;font-weight:800;box-shadow:inset 0 1px 10px rgba(255,255,255,.2)}
+.role{border:2px solid #393044;color:#bfa6e9;border-radius:22px;padding:9px 13px;font-size:11px;letter-spacing:2px}
+.member h3{font-size:20px;margin:24px 0 7px}
+.member p{color:var(--muted);margin:0;font-size:16px}
+.upload-panel{margin-top:34px;border:2px solid #292631;background:#14121a;padding:22px;border-radius:24px}
+.upload-panel h2{font-size:18px;letter-spacing:.2px;margin:0 0 8px}
+.hint{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 18px}
+.drop{border:2px dashed #51445f;border-radius:18px;min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;cursor:pointer;transition:.2s;background:#181421}
+.drop:hover,.drop.over{border-color:var(--purple);background:#1b1328}
+.upload-icon{font-size:34px;color:#a66aff;display:block;margin-bottom:10px}
+.drop strong{display:block;margin-bottom:7px}
+.drop small{color:#aaa}
+input[type=file]{display:none}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+button,.file-button{border:0;background:linear-gradient(110deg,#a05cff,#8146e8);color:white;padding:12px 18px;border-radius:24px;font-weight:700;cursor:pointer}
+button:hover,.file-button:hover{filter:brightness(1.12)}
+.secondary{background:#1a1722;border:1px solid #494153;color:#e9e1f5}
+.status{color:#aaa;font-size:12px}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{border:2px solid #292631;border-radius:24px;background:#14121a;overflow:hidden}
+.card img{display:block;width:100%;height:220px;object-fit:cover;background:#222}
+.card-info{padding:14px}
+.card-info input{width:100%;background:#0d0b12;border:1px solid #40394b;border-radius:12px;color:white;padding:11px;font-size:13px}
+.card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.card-bottom small{color:#888;font-size:10px}
+.delete{background:#211b2b;border:1px solid #51445f;padding:8px 12px;font-size:11px}
+.empty{grid-column:1/-1;text-align:center;color:#81798e;border:2px dashed #393343;border-radius:20px;padding:35px 15px}
+footer{text-align:center;color:#6f687b;font-size:11px;letter-spacing:1px;padding:0 15px 30px}
+@media(max-width:520px){header{padding-top:24px}.members{gap:12px}.member{min-height:190px;padding:20px;border-radius:28px}.initials{width:58px;height:58px;border-radius:20px}.member h3{font-size:18px}}
+@media(min-width:800px){.members,.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <div><h1>Meet the circle.</h1></div>
+    <div class="brand">BNC<small>BALAY NI CHAD</small></div>
+  </div>
+  <div class="search-wrap">
+    <input class="search" id="memberSearch" type="search" placeholder="Search members..." aria-label="Search members">
+  </div>
+  <p class="hint" style="margin:0 0 8px">Browse the Owner, Admins, and Members sections below.</p>
+</header>
+<main>
+  <section>
+    <div class="section-head">
+      <div><h2>BNC MEMBERS</h2><p>Get to know the people in the circle.</p></div>
+      <span class="count" id="memberCount">0 MEMBERS</span>
+    </div>
+    <div class="role-section">
+      <div class="section-head"><div><h2>OWNER</h2><p>Founder of BNC</p></div></div>
+      <div class="members" id="ownerMembers"></div>
+    </div>
+    <div class="role-section">
+      <div class="section-head"><div><h2>ADMINS</h2><p>BNC leadership team</p></div></div>
+      <div class="members" id="adminMembers"></div>
+    </div>
+    <div class="role-section">
+      <div class="section-head"><div><h2>MEMBERS</h2><p>People in the BNC circle</p></div></div>
+      <div class="members" id="regularMembers"></div>
+    </div>
+  </section>
+  <section class="upload-panel">
+    <h2>UPLOAD YOUR PHOTOS</h2>
+    <p class="hint">Add one or more images to your BNC gallery. Your uploads will appear below and stay saved in this browser on this device.</p>
+    <label class="drop" id="dropArea" for="imageInput">
+      <span><span class="upload-icon">＋</span><strong>Choose images or drag them here</strong><small>JPG, PNG, GIF or WEBP · Multiple images supported</small></span>
+    </label>
+    <input id="imageInput" type="file" accept="image/*" multiple>
+    <div class="actions">
+      <label class="file-button" for="imageInput">＋ Select images</label>
+      <button class="secondary" id="clearAll" type="button">Clear gallery</button>
+      <span class="status" id="status" aria-live="polite">Images are saved in this browser on this device.</span>
+    </div>
+  </section>
+  <section>
+    <div class="section-head">
+      <div><h2>PHOTO GALLERY</h2><p>Your uploaded pictures.</p></div>
+      <span class="count" id="count">0 PHOTOS</span>
+    </div>
+    <div class="gallery" id="gallery"><div class="empty">No photos yet. Select images above to start your gallery.</div></div>
+  </section>
+</main>
+<footer>BNC · BALAY NI CHAD</footer>
+<script>
+const bncMembers = [
+  {name:'CHAD', initials:'CH', role:'Owner', detail:'Founder · BNC'},
+  {name:'NOCTYSSIA', initials:'NO', role:'Admin', detail:'Leadership team'},
+  {name:'DEMONITA', initials:'DE', role:'Admin', detail:'Leadership team'},
+  {name:'HEXIA', initials:'HE', role:'Admin', detail:'Leadership team'},
+  {name:'AVE', initials:'AV', role:'Admin', detail:'Leadership team'},
+  {name:'VEYR', initials:'VE', role:'Admin', detail:'Leadership team'},
+  {name:'JEDAY', initials:'JE', role:'Admin', detail:'Leadership team'},
+  {name:'APOL', initials:'AP', role:'Admin', detail:'Leadership team'},
+  {name:'RYUU', initials:'RY', role:'Admin', detail:'Leadership team'},
+  {name:'ZIGGY', initials:'ZI', role:'Member', detail:'BNC member'},
+  {name:'ALLIAH', initials:'AL', role:'Member', detail:'BNC member'},
+  {name:'SACHI', initials:'SA', role:'Member', detail:'BNC member'},
+  {name:'DIANA', initials:'DI', role:'Member', detail:'BNC member'},
+  {name:'YUNA', initials:'YU', role:'Member', detail:'BNC member'},
+  {name:'EMPUSA', initials:'EM', role:'Member', detail:'BNC member'},
+  {name:'ERINEIA', initials:'ER', role:'Member', detail:'BNC member'},
+  {name:'LOLLIE', initials:'LO', role:'Member', detail:'BNC member'},
+  {name:'TASHA', initials:'TA', role:'Member', detail:'BNC member'},
+  {name:'JEQAY', initials:'JQ', role:'Member', detail:'BNC member'},
+  {name:'YANG', initials:'YA', role:'Member', detail:'BNC member'},
+  {name:'LOTTIE', initials:'LT', role:'Member', detail:'BNC member'},
+  {name:'LILLIENNE', initials:'LI', role:'Member', detail:'BNC member'},
+  {name:'SEREIA', initials:'SE', role:'Member', detail:'BNC member'},
+  {name:'VEIL', initials:'VI', role:'Admin', detail:'Leadership team'}
+];
+function renderMembers(){
+  const query=document.getElementById('memberSearch').value.trim().toLowerCase();
+  const matches=bncMembers.filter(m=>m.name.toLowerCase().includes(query)||m.role.toLowerCase().includes(query)||m.detail.toLowerCase().includes(query));
+  document.getElementById('memberCount').textContent=matches.length+' MEMBERS';
+  [{role:'Owner',id:'ownerMembers'},{role:'Admin',id:'adminMembers'},{role:'Member',id:'regularMembers'}].forEach(group=>{
+    const root=document.getElementById(group.id);root.innerHTML='';
+    const people=matches.filter(m=>m.role===group.role);
+    if(!people.length){root.innerHTML='<div class="empty">No '+(group.role==='Admin'?'admins':group.role.toLowerCase()+'s')+' found.</div>';return;}
+    people.forEach(m=>{
+      const card=document.createElement('article');card.className='member';
+      const top=document.createElement('div');top.className='member-top';
+      const initials=document.createElement('div');initials.className='initials';initials.textContent=m.initials;
+      const role=document.createElement('span');role.className='role';role.textContent=m.role.toUpperCase();
+      top.append(initials,role);
+      const info=document.createElement('div');const name=document.createElement('h3');name.textContent=m.name;
+      const detail=document.createElement('p');detail.textContent=m.detail;info.append(name,detail);
+      card.append(top,info);root.append(card);
+    });
+  });
+}
+document.getElementById('memberSearch').addEventListener('input',renderMembers);
+renderMembers();
+
+const DB_NAME='bnc-gallery-db', STORE='photos';
+let db;
+const gallery=document.getElementById('gallery'), input=document.getElementById('imageInput');
+const statusEl=document.getElementById('status'), countEl=document.getElementById('count');
+function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });}; req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);});}
+function store(mode='readonly'){return db.transaction(STORE,mode).objectStore(STORE);}
+function allPhotos(){return new Promise((resolve,reject)=>{const r=store().getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+function addPhoto(photo){return new Promise((resolve,reject)=>{const r=store('readwrite').add(photo);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+function updatePhoto(photo){return new Promise((resolve,reject)=>{const r=store('readwrite').put(photo);r.onsuccess=resolve;r.onerror=()=>reject(r.error);});}
+function deletePhoto(id){return new Promise((resolve,reject)=>{const r=store('readwrite').delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error);});}
+function clearPhotos(){return new Promise((resolve,reject)=>{const r=store('readwrite').clear();r.onsuccess=resolve;r.onerror=()=>reject(r.error);});}
+function formatSize(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB';}
+async function render(){
+  const photos=await allPhotos(); gallery.innerHTML=''; countEl.textContent=photos.length+' PHOTO'+(photos.length===1?'':'S');
+  if(!photos.length){gallery.innerHTML='<div class="empty">No photos yet. Select images above to start your gallery.</div>';return;}
+  photos.reverse().forEach(p=>{
+    const card=document.createElement('article');card.className='card';
+    const img=document.createElement('img');img.src=URL.createObjectURL(p.blob);img.alt=p.name||'BNC gallery photo';
+    const info=document.createElement('div');info.className='card-info';
+    const name=document.createElement('input');name.value=p.name||'';name.placeholder='Add a name or caption';name.maxLength=80;name.setAttribute('aria-label','Photo name or caption');
+    name.addEventListener('change',async()=>{p.name=name.value;await updatePhoto(p);});
+    const bottom=document.createElement('div');bottom.className='card-bottom';
+    const meta=document.createElement('small');meta.textContent=formatSize(p.blob.size);
+    const del=document.createElement('button');del.className='delete';del.textContent='Remove';del.type='button';del.addEventListener('click',async()=>{await deletePhoto(p.id);render();});
+    bottom.append(meta,del);info.append(name,bottom);card.append(img,info);gallery.append(card);
+  });
+}
+async function upload(files){
+  const valid=[...files].filter(f=>f.type.startsWith('image/'));
+  if(!valid.length){statusEl.textContent='Please choose image files.';return;}
+  for(const file of valid){await addPhoto({name:file.name.replace(/\.[^.]+$/,''),blob:file,created:Date.now()});}
+  statusEl.textContent=valid.length+' image'+(valid.length===1?'':'s')+' added.';
+  input.value='';await render();
+}
+input.addEventListener('change',e=>upload(e.target.files));
+const drop=document.getElementById('dropArea');
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>upload(e.dataTransfer.files));
+document.getElementById('clearAll').addEventListener('click',async()=>{if(confirm('Remove all photos from this gallery?')){await clearPhotos();statusEl.textContent='Gallery cleared.';render();}});
+(async()=>{try{db=await openDB();await render();}catch(e){statusEl.textContent='This browser could not open local image storage. Try a recent browser.';}})();
+</script>
+</body>
+</html>
